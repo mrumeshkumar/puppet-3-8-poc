@@ -1,54 +1,55 @@
-require 'puppet'
 require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
-require 'beaker/module_install_helper'
 
-run_puppet_install_helper
-install_ca_certs unless ENV['PUPPET_INSTALL_TYPE'] =~ %r{pe}i
-install_module_on(hosts)
-install_module_dependencies_on(hosts)
+UNSUPPORTED_PLATFORMS = ['windows', 'Darwin']
+
+unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
+
+  run_puppet_install_helper
+
+  hosts.each do |host|
+    # Solaris 11 doesn't ship the SSL CA root for the forgeapi server
+    # therefore we need to use a different way to deploy the module to
+    # the host
+    if host['platform'] =~ /solaris-11/i
+      apply_manifest_on(host, 'package { "git": }')
+      # PE 3.x and 2015.2 require different locations to install modules
+      modulepath = host.puppet['modulepath']
+      modulepath = modulepath.split(':').first if modulepath
+
+      environmentpath = host.puppet['environmentpath']
+      environmentpath = environmentpath.split(':').first if environmentpath
+
+      destdir = modulepath || "#{environmentpath}/production/modules"
+      on host, "git clone -b 4.6.0 https://github.com/puppetlabs/puppetlabs-stdlib #{destdir}/stdlib"
+    else
+      on host, puppet('module install puppetlabs-stdlib')
+    end
+
+    # Need to disable update of ntp servers from DHCP, as subsequent restart of ntp causes test failures
+    if fact_on(host, 'osfamily') == 'Debian'
+      on host, 'dpkg-divert --divert /etc/dhcp-ntp.bak --local --rename --add /etc/dhcp/dhclient-exit-hooks.d/ntp'
+      on host, 'dpkg-divert --divert /etc/dhcp3-ntp.bak --local --rename --add /etc/dhcp3/dhclient-exit-hooks.d/ntp'
+    elsif fact_on(host, 'osfamily') == 'RedHat'
+      on host, 'echo "PEERNTP=no" >> /etc/sysconfig/network'
+    end
+  end
+end
 
 RSpec.configure do |c|
+  # Project root
+  proj_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+
   # Readable test descriptions
   c.formatter = :documentation
 
   # Configure all nodes in nodeset
   c.before :suite do
-  end
-end
-
-def return_puppet_version
-  (on default, puppet('--version')).output.chomp
-end
-
-RSpec.shared_context 'with faked facts' do
-  let(:facts_d) do
-    puppet_version = return_puppet_version
-    if fact('osfamily') =~ %r{windows}i
-      if fact('kernelmajversion').to_f < 6.0
-        'C:/Documents and Settings/All Users/Application Data/PuppetLabs/facter/facts.d'
-      else
-        'C:/ProgramData/PuppetLabs/facter/facts.d'
+    hosts.each do |host|
+      on host, "mkdir -p #{host['distmoduledir']}/ntp"
+      %w(lib manifests templates metadata.json).each do |file|
+        scp_to host, "#{proj_root}/#{file}", "#{host['distmoduledir']}/ntp"
       end
-    elsif Puppet::Util::Package.versioncmp(puppet_version, '4.0.0') < 0 && fact('is_pe', '--puppet') == 'true'
-      '/etc/puppetlabs/facter/facts.d'
-    else
-      '/etc/facter/facts.d'
     end
-  end
-
-  before :each do
-    # No need to create on windows, PE creates by default
-    if fact('osfamily') !~ %r{windows}i
-      shell("mkdir -p '#{facts_d}'")
-    end
-  end
-
-  after :each do
-    shell("rm -f '#{facts_d}/fqdn.txt'", :acceptable_exit_codes => [0, 1])
-  end
-
-  def fake_fact(name, value)
-    shell("echo #{name}=#{value} > '#{facts_d}/#{name}.txt'")
   end
 end

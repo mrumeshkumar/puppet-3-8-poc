@@ -1,11 +1,6 @@
-stdlib puppet module
+ntp puppet module
 
-Copyright (C) 2011-2016 Puppet Labs, Inc.
-
-and some parts:
-
-Copyright (C) 2011 Krzysztof Wilczynski
-
+Copyright (C) 2013-2016 Puppet Labs, Inc.
 
 Puppet Labs can be contacted at: info@puppetlabs.com
 

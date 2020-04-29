@@ -1,14 +1,14 @@
 {
-  "name": "puppetlabs-stdlib",
-  "version": "4.25.1",
-  "author": "puppetlabs",
-  "summary": "Standard library of resources for Puppet modules.",
+  "name": "puppetlabs-ntp",
+  "version": "4.2.0",
+  "author": "Puppet Labs",
+  "summary": "Installs, configures, and manages the NTP service.",
   "license": "Apache-2.0",
-  "source": "https://github.com/puppetlabs/puppetlabs-stdlib",
-  "project_page": "https://github.com/puppetlabs/puppetlabs-stdlib",
+  "source": "https://github.com/puppetlabs/puppetlabs-ntp",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-ntp",
   "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
   "dependencies": [
-  
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.6.0 < 5.0.0"}
   ],
   "data_provider": null,
   "operatingsystem_support": [
@@ -45,8 +45,17 @@
       ]
     },
     {
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": [
+        "20",
+        "21",
+        "22"
+      ]
+    },
+    {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
+        "10 SP4",
         "11 SP1",
         "12"
       ]
@@ -54,36 +63,23 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
+        "6",
         "7",
-        "8",
-        "9"
+        "8"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "14.04",
-        "16.04"
+        "10.04",
+        "12.04",
+        "14.04"
       ]
     },
     {
       "operatingsystem": "Solaris",
       "operatingsystemrelease": [
-        "10",
         "11"
-      ]
-    },
-    {
-      "operatingsystem": "Windows",
-      "operatingsystemrelease": [
-        "Server 2008",
-        "Server 2008 R2",
-        "Server 2012",
-        "Server 2012 R2",
-        "Server 2016",
-        "7",
-        "8",
-        "10"
       ]
     },
     {
@@ -93,16 +89,26 @@
         "6.1",
         "7.1"
       ]
+    },
+    {
+      "operatingsystem": "Amazon",
+      "operatingsystemrelease": [
+        "2013.09",
+        "2014.03",
+        "2014.09",
+        "2015.03"
+      ]
     }
   ],
   "requirements": [
     {
+      "name": "pe",
+      "version_requirement": ">= 3.7.0 < 2015.4.0"
+    },
+    {
       "name": "puppet",
-      "version_requirement": ">=2.7.20 < 6.0.0"
+      "version_requirement": ">= 3.0.0 < 5.0.0"
     }
   ],
-  "description": "Standard Library for Puppet Modules",
-  "pdk-version": "1.4.1",
-  "template-url": "file:///opt/puppetlabs/pdk/share/cache/pdk-templates.git",
-  "template-ref": "1.4.1-0-g52adbbb"
+  "description": "NTP Module for Debian, Ubuntu, CentOS, RHEL, OEL, Fedora, FreeBSD, ArchLinux, Amazon Linux and Gentoo."
 }

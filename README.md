@@ -1,0 +1,1 @@
+# puppet-POC sample repo

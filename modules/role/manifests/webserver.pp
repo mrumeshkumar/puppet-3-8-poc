@@ -1,6 +1,6 @@
 class role::webserver{
   class { 'motd':
-    template => 'motd/web_server.epp',
+    template => 'motd/web_server.erb',
   }
   
   class { 'ntp':

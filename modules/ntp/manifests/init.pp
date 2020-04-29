@@ -1,3 +1,4 @@
+# ntp class
 class ntp (
   $autoupdate        = $ntp::params::autoupdate,
   $broadcastclient   = $ntp::params::broadcastclient,

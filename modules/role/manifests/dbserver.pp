@@ -1,8 +1,9 @@
+# Roles Defination
 class role::dbserver{
-  class { 'motd':
+  class {'motd':
     template => 'motd/db_server.erb',
   }
- # class { '::ntp':
-  #  servers => [ '1.1.1.1' ],
-  #}
+  class {'ntp':
+    servers => [ '1.1.1.1' ],
+  }
 }

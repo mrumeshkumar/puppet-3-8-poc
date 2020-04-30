@@ -12,7 +12,7 @@ class ntp::service inherits ntp {
       name       => $ntp::service_name,
       provider   => $ntp::service_provider,
       #hasstatus  => true,
-      hasrestart => true,
+      #hasrestart => true,
     }
   }
 

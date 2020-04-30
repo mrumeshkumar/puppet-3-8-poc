@@ -7,5 +7,4 @@ class role::webserver
   class { 'ntp':
      servers => [ '2.2.2.2' ],
     }
-
 }

@@ -11,7 +11,7 @@ class ntp::service inherits ntp {
       enable     => $ntp::service_enable,
       name       => $ntp::service_name,
       provider   => $ntp::service_provider,
-      hasstatus  => true,
+      #hasstatus  => true,
       hasrestart => true,
     }
   }

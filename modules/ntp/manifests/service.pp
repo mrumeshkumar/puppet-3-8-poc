@@ -6,13 +6,13 @@ class ntp::service inherits ntp {
   }
 
   if $ntp::service_manage == true {
-    service { 'ntp':
+    service { 'ntpd':
       ensure     => $ntp::service_ensure,
       enable     => $ntp::service_enable,
       name       => $ntp::service_name,
       provider   => $ntp::service_provider,
-      #hasstatus  => true,
-      #hasrestart => true,
+      hasstatus  => true,
+      hasrestart => true,
     }
   }
 

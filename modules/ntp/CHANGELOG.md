@@ -1,3 +1,92 @@
+## Supported Release 4.2.0
+### Summary
+
+A large release with many new features. Multiple additions to parameters and work contributed to OS compatibility. Also includes several bug fixes, including clean ups of code. 
+
+#### Features
+- Updated spec helper for more consistency
+- Addition of config_dir variable
+- Addition of puppet TOS options
+- Added support for disabling kernel time discipline in ntp.conf
+- Update Solaris support for newer Facter, and Amazon for < 1.7.0 facter
+- Added disable_dhclient parameter
+- Added OpenSUSE 13.2 compatibility
+- Parameterize file mode of config file
+- Enhanced the default configuration
+- Debian 8 compatibility
+- Enabled usage of the $ntpsigndsocket parameter
+- Added parameter for interfaces to ignore
+- Added support for the authprov parameter
+- Additional work done for SLES 12 compatibility
+- Addition of key template options/ key distribution
+
+#### Bugfixes
+- Fix for strict variables and tests
+- Fixed test with preferred server and iburst enabled
+- Added logfile parameter test
+- Cleaned out unused cleanup code and utilities from spec_helper
+- Deprecated ntp_dirname function
+- No longer manages the keys_file parent when it would be inappropriate to do so
+- Converted license string to SPDX format
+- Removed ruby 1.8.7 and puppet 2.7 from travis-ci jobs
+
+## Supported Release 4.1.2
+###Summary
+
+Small release for support of newer PE versions. This increments the version of PE in the metadata.json file.
+
+## Supported Release 4.1.1
+### Summary
+This is a bugfix release to address security vulnerability CVE-2013-5211.
+
+#### Bugfixes
+- Changes the default behavior to disable monitoring as part of the solution for CVE-2013-5211.
+
+## 2015-07-21 - Supported Release 4.1.0
+### Summary
+This release updates metadata to support new version of puppet enterprise, as well as new features, bugfixes, and test improvements.
+
+#### Features
+- Adds Solaris 10 support
+- Adds Fedora 20, 21, 22 compatibility
+
+#### Bugfixes
+- Fix default configuration for Debian (MODULES-2087)
+- Fix to ensure log file is created before service starts
+- Fixes SLES params for SLES 10, 11, 12
+
+## 2015-05-26 - Supported Release 4.0.0
+### Summary
+This release drops puppet 2.7 support and older stdlib support. It also includes the addition of 12 new properties, as well as numerous bug fixes and other improvements.
+
+#### Backwards-incompatible changes
+- UDLC (Undisciplined local clock) is now no longer enabled by default on anything (previous was enabled on non-virtual).
+- Puppet 2.7 no longer supported
+- puppetlabs-stdlib less than 4.5.0 no longer supported
+
+#### Features
+- Readme, Metadata, and Contribution documentation improvements
+- Acceptance test improvements
+- Added the `broadcastclient` property
+- Added the `disable_auth` property
+- Added `broadcastclient` property
+- Added `disable_auth` property
+- Added `fudge` property
+- Added `peers` property
+- Added `udlc_stratum` property
+- Added `tinker` property
+- Added `minpoll` property
+- Added `maxpoll` property
+- Added `stepout` property
+- Added `leapfile` property
+
+#### Bugfixes
+- Removing equal sign as delimiter in ntp.conf for the logfile parameter.
+- Add package_manage parameter, which is set to false by default on FreeBSD
+- Fixed an issue with the `is_virtual` property
+- Fixed debian wheezy issue
+- Fix for Redhat to disable ntp restart due to dhcp ntp server updates
+
 ##2014-11-04 - Supported Release 3.3.0
 ###Summary
 

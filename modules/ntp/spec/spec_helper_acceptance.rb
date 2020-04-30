@@ -1,28 +1,37 @@
 require 'beaker-rspec'
+require 'beaker/puppet_install_helper'
 
 UNSUPPORTED_PLATFORMS = ['windows', 'Darwin']
 
 unless ENV['RS_PROVISION'] == 'no' or ENV['BEAKER_provision'] == 'no'
-  # This will install the latest available package on el and deb based
-  # systems fail on windows and osx, and install via gem on other *nixes
-  foss_opts = {:default_action => 'gem_install'}
 
-  if default.is_pe?; then
-    install_pe;
-  else
-    install_puppet(foss_opts);
-  end
+  run_puppet_install_helper
 
   hosts.each do |host|
-    unless host.is_pe?
-      on host, "/bin/echo '' > #{host['hieraconf']}"
-    end
-    on host, "mkdir -p #{host['distmoduledir']}"
-    if host['platform'] =~ /sles-12/i || host['platform'] =~ /solaris-11/i
-      apply_manifest_on(host, 'package{"git":}')
-      on host, 'git clone -b 4.3.x https://github.com/puppetlabs/puppetlabs-stdlib /etc/puppetlabs/puppet/modules/stdlib'
+    # Solaris 11 doesn't ship the SSL CA root for the forgeapi server
+    # therefore we need to use a different way to deploy the module to
+    # the host
+    if host['platform'] =~ /solaris-11/i
+      apply_manifest_on(host, 'package { "git": }')
+      # PE 3.x and 2015.2 require different locations to install modules
+      modulepath = host.puppet['modulepath']
+      modulepath = modulepath.split(':').first if modulepath
+
+      environmentpath = host.puppet['environmentpath']
+      environmentpath = environmentpath.split(':').first if environmentpath
+
+      destdir = modulepath || "#{environmentpath}/production/modules"
+      on host, "git clone -b 4.6.0 https://github.com/puppetlabs/puppetlabs-stdlib #{destdir}/stdlib"
     else
-      on host, puppet('module install puppetlabs-stdlib'), {:acceptable_exit_codes => [0, 1]}
+      on host, puppet('module install puppetlabs-stdlib')
+    end
+
+    # Need to disable update of ntp servers from DHCP, as subsequent restart of ntp causes test failures
+    if fact_on(host, 'osfamily') == 'Debian'
+      on host, 'dpkg-divert --divert /etc/dhcp-ntp.bak --local --rename --add /etc/dhcp/dhclient-exit-hooks.d/ntp'
+      on host, 'dpkg-divert --divert /etc/dhcp3-ntp.bak --local --rename --add /etc/dhcp3/dhclient-exit-hooks.d/ntp'
+    elsif fact_on(host, 'osfamily') == 'RedHat'
+      on host, 'echo "PEERNTP=no" >> /etc/sysconfig/network'
     end
   end
 end
